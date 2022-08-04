@@ -56,28 +56,6 @@ func (s Storage) Save(page *storage.Page) (err error) {
 	return nil
 }
 
-func (s Storage) PickRandom(UserName string) (p *storage.Page, err error) {
-	defer func() { err = e.WrapIfErr("cannot pick random page", err) }()
-
-	fPath := filepath.Join(s.basePath, UserName)
-
-	files, err := os.ReadDir(fPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(files) == 0 {
-		return nil, ErrNoSavedPage
-	}
-
-	r := rand.New(rand.NewSource(time.Now().UnixMilli()))
-	NumFile := r.Intn(len(files) - 1)
-
-	file := files[NumFile]
-
-	return s.decodePage(filepath.Join(fPath, file.Name()))
-}
-
 func (s Storage) Remove(p *storage.Page) error {
 	fileName, err := fileName(p)
 	if err != nil {
@@ -113,6 +91,28 @@ func (s Storage) IsExists(p *storage.Page) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (s Storage) PickRandom(UserName string) (p *storage.Page, err error) {
+	defer func() { err = e.WrapIfErr("cannot pick random page", err) }()
+
+	fPath := filepath.Join(s.basePath, UserName)
+
+	files, err := os.ReadDir(fPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(files) == 0 {
+		return nil, ErrNoSavedPage
+	}
+
+	r := rand.New(rand.NewSource(time.Now().UnixMilli()))
+	NumFile := r.Intn(len(files) - 1)
+
+	file := files[NumFile]
+
+	return s.decodePage(filepath.Join(fPath, file.Name()))
 }
 
 func (s Storage) decodePage(filePath string) (*storage.Page, error) {

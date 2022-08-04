@@ -22,6 +22,8 @@ type Page struct {
 
 func (p Page) Hash() (string, error) {
 	// todo
+	// two simple steps - writeString into h(new sha1 obj) and conver it with Sum()
+	// actually I can to send the second string in Sum method as parameter, but ok
 
 	h := sha1.New()
 
